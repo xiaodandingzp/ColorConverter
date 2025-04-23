@@ -1,40 +1,134 @@
 <template>
   <div class="container">
-    <h1>颜色转换器</h1>
-    <div class="input-group">
-      <input 
-        v-model="colorInput" 
-        type="text" 
-        placeholder="输入16进制或RGBA颜色值"
-        @keyup.enter="convertColor"
-      />
-      <button @click="convertColor">转换</button>
+    <h1 class="title">颜色转换器</h1>
+    
+    <!-- 颜色转换部分 -->
+    <div class="card">
+      <div class="input-group">
+        <input 
+          v-model="colorInput" 
+          type="text" 
+          placeholder="输入16进制或RGBA颜色值"
+          @keyup.enter="convertColor"
+          class="input"
+        />
+        <button @click="convertColor" class="btn">转换</button>
+      </div>
+      <div v-if="convertedColor" class="result">
+        <span class="label">转换结果：</span>
+        <span class="value">{{ convertedColor }}</span>
+      </div>
+      <div 
+        v-if="convertedColor" 
+        class="color-display"
+        :style="{ backgroundColor: convertedColor }"
+      ></div>
     </div>
-    <div v-if="convertedColor" class="result">
-      转换结果：{{ convertedColor }}
-    </div>
-    <div 
-      v-if="convertedColor" 
-      class="color-display"
-      :style="{ backgroundColor: convertedColor }"
-    ></div>
 
-    <!-- 添加明度调整部分 -->
-    <div class="input-group">
-      <input
-        v-model="brightnessValue"
-        type="number"
-        min="0"
-        max="100"
-        placeholder="输入明度 (0-100)"
-      />
-      <button @click="adjustBrightness">调整明度</button>
-    </div>
-    <div v-if="brightnessColor" class="result">
-      明度调整结果：{{ brightnessColor }}
+    <!-- 明度调整部分 -->
+    <div class="card">
+      <div class="input-group">
+        <input
+          v-model="brightnessValue"
+          type="number"
+          min="0"
+          max="100"
+          placeholder="输入明度 (0-100)"
+          class="input"
+        />
+        <button @click="adjustBrightness" class="btn">调整明度</button>
+      </div>
+      <div v-if="brightnessColor" class="result">
+        <span class="label">明度调整结果：</span>
+        <span class="value">{{ brightnessColor }}</span>
+      </div>
     </div>
   </div>
 </template>
+
+<style>
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.title {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.input-group {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.result {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.label {
+  color: #666;
+}
+
+.value {
+  color: #333;
+  font-weight: 500;
+}
+
+.color-display {
+  width: 100%;
+  height: 100px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-top: 1rem;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+</style>
 
 <script>
 export default {
@@ -114,53 +208,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.input-group {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-input {
-  flex: 1;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-button {
-  padding: 8px 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-.result {
-  padding: 10px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  margin-bottom: 20px;
-}
-
-/* 添加颜色显示样式 */
-.color-display {
-  width: 100%;
-  height: 100px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-</style>
