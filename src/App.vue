@@ -6,11 +6,32 @@
         v-model="colorInput" 
         type="text" 
         placeholder="输入16进制或RGBA颜色值"
+        @keyup.enter="convertColor"
       />
       <button @click="convertColor">转换</button>
     </div>
     <div v-if="convertedColor" class="result">
       转换结果：{{ convertedColor }}
+    </div>
+    <div 
+      v-if="convertedColor" 
+      class="color-display"
+      :style="{ backgroundColor: convertedColor }"
+    ></div>
+
+    <!-- 添加明度调整部分 -->
+    <div class="input-group">
+      <input
+        v-model="brightnessValue"
+        type="number"
+        min="0"
+        max="100"
+        placeholder="输入明度 (0-100)"
+      />
+      <button @click="adjustBrightness">调整明度</button>
+    </div>
+    <div v-if="brightnessColor" class="result">
+      明度调整结果：{{ brightnessColor }}
     </div>
   </div>
 </template>
@@ -19,9 +40,15 @@
 export default {
   data() {
     return {
-      colorInput: '',
-      convertedColor: ''
+      colorInput: '#000000',
+      convertedColor: 'rgba(0, 0, 0, 1)',
+      brightnessValue: 50,
+      brightnessColor: '',
+      colorDisplay: ''  // 添加 colorDisplay 定义
     }
+  },
+  mounted() {
+    this.colorDisplay = this.convertedColor
   },
   methods: {
     convertColor() {
@@ -60,6 +87,29 @@ export default {
     rgbaToHex(rgba) {
       const [r, g, b] = rgba.match(/\d+/g)
       return `#${((1 << 24) + (Number(r) << 16) + (Number(g) << 8) + Number(b)).toString(16).slice(1)}`
+    },
+    adjustBrightness() {  // 在前面添加逗号
+      const brightness = parseFloat(this.brightnessValue) / 100
+      if (isNaN(brightness) || brightness < 0 || brightness > 1) {
+        this.brightnessColor = '无效的明度值'
+        return
+      }
+
+      const color = this.convertedColor.startsWith('#') ? 
+        this.convertedColor : 
+        this.rgbaToHex(this.convertedColor)
+
+      const rgb = this.hexToRgb(color)
+      const adjusted = rgb.map(c => Math.round(c * brightness))
+      this.brightnessColor = `#${((1 << 24) + (adjusted[0] << 16) + (adjusted[1] << 8) + adjusted[2]).toString(16).slice(1)}`
+    },
+    hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+      return result ? [
+        parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16)
+      ] : [0, 0, 0]
     }
   }
 }
@@ -102,5 +152,15 @@ button:hover {
   padding: 10px;
   background-color: #f5f5f5;
   border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+/* 添加颜色显示样式 */
+.color-display {
+  width: 100%;
+  height: 100px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style>
